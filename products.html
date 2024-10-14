@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنتجات - متجر المنتجات</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .button-container {
+            margin-top: 10px;
+        }
+        .btn {
+            color: white;
+            text-decoration: none;
+            background-color: #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .category-section {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .category-section label {
+            font-weight: bold;
+        }
+        #productCategory {
+            width: 300px;
+            margin-top: 10px;
+        }
+        #productItems {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .product-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .price {
+            color: #28a745;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>المنتجات</h1>
+        <div class="button-container">
+            <a href="add-product.html" class="btn add-product">
+                <i class="fas fa-plus"></i> إضافة منتج
+            </a>
+            <a href="products.html" class="btn view-products">
+                <i class="fas fa-th-list"></i> استعرض المنتجات
+            </a>
+            <a href="index.html" class="btn home">
+                <i class="fas fa-home"></i> الصفحة الرئيسية
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <div class="category-section">
+            <label for="productCategory">اختر فئة المنتج:</label>
+            <select id="productCategory" onchange="filterProducts()">
+                <option value="">جميع الفئات</option>
+                <option value="electronics">إلكترونيات</option>
+                <option value="clothing">ملابس</option>
+                <option value="furniture">أثاث</option>
+                <option value="toys">ألعاب</option>
+            </select>
+        </div>
+
+        <section id="productItems">
+            <!-- المنتجات ستظهر هنا -->
+        </section>
+    </main>
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2024</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#productCategory').select2({
+                minimumResultsForSearch: Infinity // إخفاء مربع البحث
+            });
+        });
+
+        function filterProducts() {
+            const category = document.getElementById('productCategory').value;
+            const productItems = document.getElementById('productItems');
+
+            // Clear existing products
+            productItems.innerHTML = '';
+
+            // Fetch products from localStorage (or any other source)
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+
+            // Filter products by category
+            const filteredProducts = category ? products.filter(product => product.category === category) : products;
+
+            // Display filtered products
+            filteredProducts.forEach((product, index) => {
+                const productCard = createProductCard(product, index);
+                productItems.appendChild(productCard);
+            });
+        }
+
+        // دالة لإنشاء بطاقة المنتج
+        function createProductCard(product, index) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+
+            productCard.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <h4>${product.name}</h4>
+                <p>${product.description}</p>
+                <p class="price">سعر: ${product.price} ₪</p>
+                <button class="btn edit" onclick="editProduct(${index})">تعديل</button>
+                <button class="btn delete" onclick="deleteProduct(${index})">حذف</button>
+            `;
+
+            return productCard;
+        }
+
+        function editProduct(index) {
+            const products = JSON.parse(localStorage.getItem('products'));
+            const product = products[index];
+
+            // هنا يمكنك إضافة نموذج لتحرير المنتج أو إظهار المعلومات في حقول قابلة للتعديل
+            // كمثال بسيط، سنقوم بإظهار معلومات المنتج في وحدة التحكم
+            console.log('تعديل المنتج:', product);
+
+            // يمكنك أيضاً استخدام نافذة منبثقة أو نموذج لتحرير التفاصيل
+            // بعد التعديل يمكنك تحديث البيانات في localStorage
+        }
+
+        function deleteProduct(index) {
+            const products = JSON.parse(localStorage.getItem('products'));
+            products.splice(index, 1); // حذف المنتج
+            localStorage.setItem('products', JSON.stringify(products)); // تحديث localStorage
+            filterProducts(); // إعادة تحميل المنتجات بعد الحذف
+            alert('تم حذف المنتج بنجاح!');
+        }
+    </script>
+</body>
+</html>
